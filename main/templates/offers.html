@@ -1,0 +1,40 @@
+{% extends "partials/base.html" %}
+{% block content %}
+    {% load static %}
+    <div class="row justify-content-center">
+
+        {% for offer in offers %}
+            <div class="card m-3 col-md-6 p-0" style="width: 20rem; height: 30rem;">
+                <div class="card-header" style="background-color: white">
+                    <div class="row">
+                        <h4 class="col"> {{ offer.card.name }} </h4>
+                        <div class="col ">
+                            <div class="row justify-content-end">
+                                {{ offer.owner }}
+                                <img src="{% static user.profile.profileType.img %}" alt=""
+                                     style="max-height: 50px; max-width: 50px"
+                                     class="d-inline-block align-text-top rounded-circle ms-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <img src="{{ offer.card.image }}" class="card-img-top" alt="..." style="height: 10rem;">
+                <div class="card-body">
+                    <p class="card-text" style="font-size: .9rem">{{ offer.card.description }}</p>
+                </div>
+{#                {% if offer.owner == user %}#}
+                    <div class="card-footer">
+                        <a href="{% url 'offer_reply' offer.id 1 %}" class="btn text-light"
+                           style="background-color: #219ebc">Accept
+                        </a>
+                        <a href="{% url 'offer_reply' offer.id 0 %}" class="btn text-light"
+                           style="background-color: #219ebc">Reject
+                        </a>
+                    </div>
+{#                {% endif %}#}
+
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

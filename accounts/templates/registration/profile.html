@@ -1,0 +1,52 @@
+{% extends "partials/base.html" %}
+{% block content %}
+    {% load static %}
+    {#    <h2 class="text-center py-2">{{ user.username }}</h2>#}
+    <p class="text-center pt-3">Species: {{ user.profile.profileType }} Coins:{{ user.profile.coins }}</p>
+    <h4 class="pb-3 text-center"> {{ user.deck.cards.all|length }} Cards</h4>
+    <hr>
+    <div class="row justify-content-center">
+        {% for card in cards %}
+            <div class="card m-3 col-md-6 p-0" style="width: 20rem; height: 30rem;">
+                <h4 class="card-header text-center">{{ card.name }}</h4>
+                <img src="{{ card.image }}" class="card-img-top" alt="..." style="height: 10rem;">
+                <div class="card-body">
+                    <p class="card-text" style="font-size: .9rem">{{ card.description }}</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">offers pending
+                        {{ card.transaction_set.all.0.offer_set.all|length }}
+                        {% if  card.transaction_set.all.0.offer_set.all %}
+                            <a href="{% url 'offers' card.transaction_set.all.0.id %}" class="ms-1">View</a>
+                        {% endif %}
+                    </li>
+                </ul>
+
+                <div class="card-footer">
+
+                    {% if card.transaction_set.all %}
+                        <!-- trade on -->
+                        <a href="{% url 'toggle_transaction' card.id 'profile' %}" class="btn text-light me-1"
+                           style="background-color: #219ebc">Trade On</a>
+                    {% else %}
+                        <!-- trade off -->
+                        <a href="{% url 'toggle_transaction' card.id 'profile' %}" class="btn text-light me-1"
+                           style="background-color: gray">Trade off</a>
+                    {% endif %}
+
+                    {% if card.sell_set.all %}
+                        <!-- sale on -->
+                        <a href="{% url 'remove_sale' card.sell_set.all.0.id 'profile' %}" class="btn text-light me-1"
+                           style="background-color: #219ebc">Sale On</a>
+                        <a class="ps-2" style="text-decoration: none; color: #023047">
+                            at {{ card.sell_set.all.0.price }}$</a>
+                    {% else %}
+                        <!-- sale off -->
+                        <a href="{% url 'toggle_sale' card.id %}" class="btn text-light"
+                           style="background-color: gray">Sell</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

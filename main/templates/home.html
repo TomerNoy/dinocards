@@ -1,0 +1,109 @@
+{% extends "partials/base.html" %}
+{% block content %}
+    {% load static %}
+    <h4 class="text-center pt-3">Market</h4>
+    <div class="row">
+        <div class="col text-end">
+            Max cards: {{ most_cards }}
+        </div>
+        <div class="col text-center">
+            WINNERS
+        </div>
+        <div class="col">
+            Max coins: {{ most_coins }}
+        </div>
+    </div>
+    <hr>
+    <div class="row justify-content-center">
+        {% for card in cards %}
+            <div class="card p-0 m-3 col-md-6" style="width: 20rem; height: 30rem;">
+                <div class="card-header" style="background-color: white">
+                    <div class="row">
+                        <h4 class="col"> {{ card.name }} </h4>
+                        <div class="col ">
+                            <div class="row justify-content-end">
+                                {% if card.transaction_set.all %}
+                                    {{ card.transaction_set.all.0.owner }}
+                                    <img src="{% static card.transaction_set.all.0.owner.profile.profileType.img %}"
+                                         alt=""
+                                         style="max-height: 50px; max-width: 50px"
+                                         class="d-inline-block align-text-top rounded-circle ms-3">
+
+                                {% else %}
+                                    {{ card.sell_set.all.0.owner }}
+                                    <img src="{% static card.sell_set.all.0.owner.profile.profileType.img %}"
+                                         alt=""
+                                         style="max-height: 50px; max-width: 50px"
+                                         class="d-inline-block align-text-top rounded-circle ms-3">
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <img src="{{ card.image }}" class="card-img-top" alt="" style="height: 10rem;">
+                <div class="card-body">
+                    <p class="card-text" style="font-size: .8rem">{{ card.description }} </p>
+                </div>
+
+                {% if card.transaction_set.all %}
+                    <!-- on trade -->
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Trade requests
+                            {{ card.transaction_set.all.0.offer_set.all|length }}
+                            {% if  user == card.transaction_set.all.0.owner %}
+                                <!-- is user -->
+                                <a href="{% url 'offers' card.transaction_set.all.0.id %}" class="ms-1">View</a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                {% endif %}
+
+                <div class="card-footer">
+                    {% if  card.transaction_set.all %}
+                        <!-- trade on -->
+                        {% if  user == card.transaction_set.all.0.owner %}
+                            <!-- is user -->
+                            <a href="{% url 'toggle_transaction' card.id 'home' %}" class="btn text-light me-1"
+                               style="background-color: #219ebc">Trade On</a>
+                        {% else %}
+                            <!-- is other user -->
+                            <a href="{% url 'select_card' card.transaction_set.all.0.id %}"
+                               class="btn text-light me-1" style="background-color: #219ebc">Make Offer</a>
+                        {% endif %}
+                        {#                    {% else %}#}
+                        {#                        <!-- trade off -->#}
+                        {#                        <a href="{% url 'toggle_transaction' card.id 'home' %}" class="btn text-light me-1"#}
+                        {#                           style="background-color: gray">Trade off</a>#}
+                    {% endif %}
+
+                    {% if card.sell_set.all %}
+                        <!-- on sale -->
+                        {% if user == card.sell_set.all.0.owner %}
+                            <!-- is user -->
+                            <a href="{% url 'remove_sale' card.sell_set.all.0.id 'home' %}"
+                               class="btn text-light me-1" style="background-color: #219ebc">Sale On</a>
+                        {% else %}
+                            <!-- is other user -->
+                            {% if user.profile.coins >= card.sell_set.all.0.price %}
+                                <!-- user has money -->
+                                <a href="{% url 'buy' card.sell_set.all.0.id %}"
+                                   class="btn text-light" style="background-color: #219ebc">Buy</a>
+                            {% else %}
+                                <!-- user money not enough -->
+                                <a href="#"
+                                   class="btn text-light disabled" style="background-color: #219ebc">Buy</a>
+                            {% endif %}
+                        {% endif %}
+                        <a class="ps-1" style="text-decoration: none; color: #023047">{{ card.sell_set.all.0.price }}
+                            coins</a>
+                        {#                    {% else %}#}
+                        {#                        <!-- not on sale -->#}
+                    {% endif %}
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+{% endblock %}

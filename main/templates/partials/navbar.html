@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #023047;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">DinoCards</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">Market</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <!-- is auth -->
+                    <li class="nav-item"><a href="{% url 'index' %}" class="nav-link">Forum</a></li>
+                    <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+                {% else %}
+                    <!-- not auth -->
+                    <li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+                    <li class="nav-item"><a href="{% url 'signup' %}" class="nav-link">SignUp</a></li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    {% if user.is_superuser %}
+                        <a href="{% url 'edit' %}" class="nav-link">Edit</a>
+                    {% elif user.is_authenticated %}
+
+                        <a class="row navbar-brand align-items-center " href="{% url 'profile' %}">
+                            <div class="col"> {{ user.username }} </div>
+                            <div class="col">
+                                <img src="{% static user.profile.profileType.img %}" alt=""
+                                     style="max-height: 40px; max-width: 40px;"
+                                     class="rounded-circle">
+                            </div>
+                        </a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

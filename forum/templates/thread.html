@@ -1,0 +1,33 @@
+{% extends "partials/base.html" %}
+{% block content %}
+    {% load static %}
+
+    <div class="row pt-4">
+        <h4 class="col">{{ thread.subject }} </h4>
+        <p class="col text-end">{{ thread.creator }} {{ thread.date|date:"D d M Y" }}</p>
+    </div>
+    <hr>
+
+    {% for comment in thread.comment_set.all %}
+        <a href="#" style="text-decoration: none">
+            <div class="row bg-light p-3 my-3 text-dark align-items-center" style="--bs-bg-opacity: .5;">
+                <img class="d-inline-block align-text-top col-1 "
+                     src="{% static comment.user.profile.profileType.img %}" alt="" width="60" height="45">
+                <div class="col-2 "> {{ comment.user.username }}</div>
+                <div class="col"> {{ comment.text }}</div>
+                <div class="col text-end"> {{ comment.date|date:"D d M Y" }}</div>
+            </div>
+        </a>
+    {% endfor %}
+    {% load django_bootstrap5 %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form comment_form %}
+
+        <div class="container mt-3">
+            <input type="submit" value="Add Comment" class="btn btn-secondary">
+        </div>
+    </form>
+    {#    {{ comment_form }}#}
+
+{% endblock %}
